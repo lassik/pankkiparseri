@@ -13,13 +13,13 @@ Pankkiparseri.isoDateFromFinnishDate = function (finnishDate) {
 
 Pankkiparseri.centsFromAmountParsed = function (eurosStr, centsStr, signStr) {
     var euros = parseInt(eurosStr)
-    var cents = parseInt(centsStr)
-    var sign = parseInt(signStr + '1')
+    var cents = !centsStr ? 0 : parseInt(centsStr.slice(1).padStart(2, '0'))
+    var sign = (signStr === '-') ? -1 : 1
     return sign * ((100 * euros) + cents)
 }
 
 Pankkiparseri.centsFromAmountSignFirst = function (formattedAmount) {
-    var g = formattedAmount.match(/^([+-])(\d{1,5}),(\d{2})$/)
+    var g = formattedAmount.match(/^([+-]?)(\d{1,5})(,\d{1,2})?$/)
     if (!g) {
         return null
     }
@@ -27,7 +27,7 @@ Pankkiparseri.centsFromAmountSignFirst = function (formattedAmount) {
 }
 
 Pankkiparseri.centsFromAmountSignLast = function (formattedAmount) {
-    var g = formattedAmount.match(/^(\d{1,5}),(\d{2})([+-])$/)
+    var g = formattedAmount.match(/^(\d{1,5})(,\d{1,2})?([+-?])$/)
     if (!g) {
         return null
     }
