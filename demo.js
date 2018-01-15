@@ -20,8 +20,8 @@ $(function () {
         allEntries.forEach(function (entry) {
             $('#entries').append(
                 $('<tr/>')
-                    .append($('<td/>').text(entry.date))
-                    .append($('<td/>').text(entry.cents).addClass('right'))
+                    .append($('<td/>').text(entry.date.iso))
+                    .append($('<td/>').text(entry.amount ? entry.amount.eurosCommaCents : 'x').addClass('right'))
                     .append($('<td/>').text(entry.otherParty))
                     .append($('<td/>').text(entry.message)))
         })
@@ -29,7 +29,7 @@ $(function () {
 
     function addEntries (newEntries) {
         newEntries.forEach(function (entry) { allEntries.push(entry) })
-        allEntries.sort(function (a, b) { return a.date.localeCompare(b.date) })
+        allEntries.sort(function (a, b) { return a.date.iso.localeCompare(b.date.iso) })
         updateEntriesTable()
     }
 

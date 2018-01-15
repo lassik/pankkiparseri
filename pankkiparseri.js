@@ -5,7 +5,7 @@ Pankkiparseri.withoutLeadingDayAndMonth = function (s) {
     return g ? g[1] : s
 }
 
-Pankkiparseri.isoDateFromFinnishDate = function (finnishDate) {
+Pankkiparseri.parseFinnishDate = function (finnishDate) {
     var g = finnishDate.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/)
     if (!g) {
         return null
@@ -13,24 +13,34 @@ Pankkiparseri.isoDateFromFinnishDate = function (finnishDate) {
     var year = (g[3].length === 2) ? ('20' + g[3]) : g[3]
     var month = g[2].padStart(2, '0')
     var day = g[1].padStart(2, '0')
-    return year + '-' + month + '-' + day
+    return {
+        iso: year + '-' + month + '-' + day,
+        isoNoDashes: year + month + day
+    }
 }
 
-Pankkiparseri.centsFromAmountParsed = function (euros, commaCents, sign) {
-    var euros = parseInt(euros)
-    var cents = !commaCents ? 0 : parseInt(commaCents.slice(1).padEnd(2, '0'))
-    var sign = (sign === '-') ? -1 : 1
-    return sign * ((100 * euros) + cents)
+Pankkiparseri.parseAmountPreparsed = function (eurosStr, commaCents, signStr) {
+    var euros = parseInt(eurosStr.replace(/\./g, ''))
+    eurosStr = String(euros)
+    var centsStr = (commaCents ? commaCents.slice(1) : '0').padEnd(2, '0')
+    var cents = parseInt(centsStr)
+    var sign = (signStr === '-') ? -1 : 1
+    signStr = (sign < 0) ? '-' : '+'
+    return {
+        cents: sign * ((100 * euros) + cents),
+        eurosDotCents: signStr + eurosStr + '.' + centsStr,
+        eurosCommaCents: signStr + eurosStr + ',' + centsStr
+    }
 }
 
-Pankkiparseri.centsFromAmountSignFirst = function (formattedAmount) {
+Pankkiparseri.parseAmountSignFirst = function (formattedAmount) {
     var g = formattedAmount.match(/^([+-]?)(\d{1,5})(,\d{1,2})?$/)
-    return g ? Pankkiparseri.centsFromAmountParsed(g[2], g[3], g[1]) : null
+    return g ? Pankkiparseri.parseAmountPreparsed(g[2], g[3], g[1]) : null
 }
 
-Pankkiparseri.centsFromAmountSignLast = function (formattedAmount) {
+Pankkiparseri.parseAmountSignLast = function (formattedAmount) {
     var g = formattedAmount.match(/^(\d{1,5})(,\d{1,2})?([+-?])$/)
-    return g ? Pankkiparseri.centsFromAmountParsed(g[1], g[2], g[3]) : null
+    return g ? Pankkiparseri.parseAmountPreparsed(g[1], g[2], g[3]) : null
 }
 
 Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV = function (contents) {
@@ -40,10 +50,10 @@ Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV = function (contents) {
     for (var lineNum = 2; lineNum <= rows.length; lineNum++) {
         var row = rows[lineNum - 1]
         var entry = {}
-        entry.date = Pankkiparseri.isoDateFromFinnishDate(row[0])
+        entry.date = Pankkiparseri.parseFinnishDate(row[0])
         entry.otherParty = row[1]
         entry.message = (row[3].match(/^'/) ? row[3].slice(1) : '')
-        entry.cents = Pankkiparseri.centsFromAmountSignFirst(row[4])
+        entry.amount = Pankkiparseri.parseAmountSignFirst(row[4])
         entries.push(entry)
     }
     return entries
@@ -60,7 +70,7 @@ Pankkiparseri.parseSPankkiTilioteTabulaCSV = function (contents) {
     for (var lineNum = 1; lineNum <= rows.length; lineNum++) {
         var row = rows[lineNum - 1]
         if ((g = row[0].match(/^KIRJAUSPÄIVÄ (\d{2}\.\d{2}\.\d{2})/))) {
-            date = Pankkiparseri.isoDateFromFinnishDate(g[1])
+            date = Pankkiparseri.parseFinnishDate(g[1])
             entry = sinceEntry = null
         } else if (row[0].match(/^\d{18} [A-Z]/)) {
             sinceEntry = 0
@@ -68,7 +78,7 @@ Pankkiparseri.parseSPankkiTilioteTabulaCSV = function (contents) {
             entry.date = date
             entry.archivalId = row[0]
             entry.otherParty = Pankkiparseri.withoutLeadingDayAndMonth(row[1])
-            entry.cents = Pankkiparseri.centsFromAmountSignLast(row[row.length - 1])
+            entry.amount = Pankkiparseri.parseAmountSignLast(row[row.length - 1])
             entry.message = ''
             entries.push(entry)
         } else if ((sinceEntry === 1 || sinceEntry === 2)) {
@@ -148,8 +158,8 @@ Pankkiparseri.ofxStringFromEntries = function (entries) {
         var stmttrn = doc.createElement('STMTTRN')
         stmttrn.appendChild(elem('FITID', i))
         stmttrn.appendChild(elem('TRNTYPE', 'CHECK'))
-        stmttrn.appendChild(elem('DTPOSTED', entry.date.replace(/-/g, '')))
-        stmttrn.appendChild(elem('TRNAMT', entry.cents)) // -200.00
+        stmttrn.appendChild(elem('DTPOSTED', entry.date.isoNoDashes))
+        stmttrn.appendChild(elem('TRNAMT', entry.amount.eurosDotCents))
         stmttrn.appendChild(elem('MEMO', entry.message))
         banktranlist.appendChild(stmttrn)
         i++
