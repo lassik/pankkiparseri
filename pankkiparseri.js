@@ -59,19 +59,32 @@ Pankkiparseri.parseSPankkiTilioteCSV = function (contents) {
     // CSV ripped from S-Pankki bank statement PDF by Tabula.
     var rows = $.csv.toArrays(contents)
     var entries = []
+    var entry = null
+    var sinceEntry = null
     var date = null
     var g
     for (var lineNum = 1; lineNum <= rows.length; lineNum++) {
         var row = rows[lineNum - 1]
         if ((g = row[0].match(/^KIRJAUSPÄIVÄ (\d{2}\.\d{2}\.\d{2})/))) {
             date = Pankkiparseri.isoDateFromFinnishDate(g[1])
+            entry = sinceEntry = null
         } else if (row[0].match(/^\d{18} [A-Z]/)) {
-            var entry = {}
+            sinceEntry = 0
+            entry = {}
             entry.date = date
             entry.archivalId = row[0]
             entry.otherParty = Pankkiparseri.withoutLeadingDayAndMonth(row[1])
             entry.cents = Pankkiparseri.centsFromAmountSignLast(row[row.length - 1])
+            entry.message = ''
             entries.push(entry)
+        } else if ((sinceEntry === 1 || sinceEntry === 2)) {
+            if (entry.message.length > 0) {
+                entry.message += ' '
+            }
+            entry.message += Pankkiparseri.withoutLeadingDayAndMonth(row[1])
+        }
+        if (sinceEntry !== null) {
+            sinceEntry += 1
         }
     }
     return entries
