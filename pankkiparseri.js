@@ -72,3 +72,46 @@ Pankkiparseri.parseSPankkiTilioteCSV = function (contents) {
     }
     return entries
 }
+
+Pankkiparseri.handleFiles = function (files, parse, postprocess) {
+    for (var i = 0; i < files.length; i++) {
+        var file = files[i]
+        if (!/^text\//.test(file.type)) { continue }
+        var reader = new FileReader()
+        reader.onload = function (e) {
+            postprocess(parse(e.target.result))
+        }
+        reader.readAsText(file)
+    }
+}
+
+Pankkiparseri.addBankToForm = function (form, bankTitle, parse) {
+    var hiddenInput = document.createElement('input')
+    hiddenInput.style.display = 'none'
+    hiddenInput.type = 'file'
+    hiddenInput.accept = '.csv,text/csv'
+    hiddenInput.multiple = true
+    hiddenInput.addEventListener('change', function (e) {
+        Pankkiparseri.handleFiles(this.files,
+                                  parse,
+                                  console.log)
+    })
+    form.appendChild(hiddenInput)
+    var button = document.createElement('button')
+    button.appendChild(document.createTextNode(bankTitle))
+    button.addEventListener('click', function (e) {
+        hiddenInput.click()
+        e.preventDefault() // prevent navigation to "#"
+    }, false)
+    form.appendChild(button)
+}
+
+Pankkiparseri.addToForm = function (formId) {
+    var form = document.getElementById(formId)
+    Pankkiparseri.addBankToForm(
+        form, 'S-Pankki (tiliote Tabula CSV)',
+        Pankkiparseri.parseSPankkiTilioteCSV)
+    Pankkiparseri.addBankToForm(
+        form, 'Oma Säästöpankki (tilitapahtumat CSV)',
+        Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV)
+}
