@@ -9,8 +9,10 @@ $(function() {
             if (!/^text\//.test(file.type))
                 continue;
             var reader = new FileReader();
+	    var parse;
+	    parse = Pankkiparseri.parseSPankkiCSV;
             reader.onload = function(e) {
-                console.log(Pankkiparseri.parseSPankkiCSV(e.target.result));
+                console.log(parse(e.target.result));
             }
             reader.readAsText(file);
         }
