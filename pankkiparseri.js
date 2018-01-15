@@ -25,18 +25,12 @@ Pankkiparseri.centsFromAmountParsed = function (euros, commaCents, sign) {
 
 Pankkiparseri.centsFromAmountSignFirst = function (formattedAmount) {
     var g = formattedAmount.match(/^([+-]?)(\d{1,5})(,\d{1,2})?$/)
-    if (!g) {
-        return null
-    }
-    return Pankkiparseri.centsFromAmountParsed(g[2], g[3], g[1])
+    return g ? Pankkiparseri.centsFromAmountParsed(g[2], g[3], g[1]) : null
 }
 
 Pankkiparseri.centsFromAmountSignLast = function (formattedAmount) {
     var g = formattedAmount.match(/^(\d{1,5})(,\d{1,2})?([+-?])$/)
-    if (!g) {
-        return null
-    }
-    return Pankkiparseri.centsFromAmountParsed(g[1], g[2], g[3])
+    return g ? Pankkiparseri.centsFromAmountParsed(g[1], g[2], g[3]) : null
 }
 
 Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV = function (contents) {
