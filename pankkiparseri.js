@@ -18,7 +18,7 @@ Pankkiparseri.parseSPankkiCSV = function(contents) {
             entry.date = date;
             entry.archival_id = row[0];
             entry.other_party = row[1];
-	    var formattedAmount = row[7];
+	    var formattedAmount = row[row.length-1];
 	    if ((m = formattedAmount.match(/^(\d{1,5}),(\d{2})([+-])$/))) {
 		entry.cents = (100*parseInt(m[1]) + parseInt(m[2]))
 		    * parseInt(m[3]+"1");
