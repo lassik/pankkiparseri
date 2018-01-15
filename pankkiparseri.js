@@ -11,15 +11,19 @@ Pankkiparseri.isoDateFromFinnishDate = function (finnishDate) {
     return year + '-' + month + '-' + day
 }
 
+Pankkiparseri.centsFromAmountParsed = function (eurosStr, centsStr, signStr) {
+    var euros = parseInt(eurosStr)
+    var cents = parseInt(centsStr)
+    var sign = parseInt(signStr + '1')
+    return sign * ((100 * euros) + cents)
+}
+
 Pankkiparseri.centsFromAmountSignLast = function (formattedAmount) {
     var g = formattedAmount.match(/^(\d{1,5}),(\d{2})([+-])$/)
     if (!g) {
         return null
     }
-    var euros = parseInt(g[1])
-    var cents = parseInt(g[2])
-    var sign = parseInt(g[3] + '1')
-    return sign * ((100 * euros) + cents)
+    return Pankkiparseri.centsFromAmountParsed(g[1], g[2], g[3])
 }
 
 Pankkiparseri.parseSPankkiTilioteCSV = function (contents) {
