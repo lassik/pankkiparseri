@@ -126,3 +126,33 @@ Pankkiparseri.addToForm = function (formId, entriesCallback) {
         'Oma Säästöpankki (tilitapahtumat CSV)',
         Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV)
 }
+
+Pankkiparseri.ofxStringFromEntries = function (entries) {
+    var doc
+    function elem (tag, bodyText) {
+        var e = doc.createElement(tag)
+        e.append(String(bodyText))
+        return e
+    }
+    doc = document.implementation.createDocument(null, 'OFX')
+    var bankmsgsrsv1 = doc.createElement('BANKMSGSRSV1')
+    doc.documentElement.appendChild(bankmsgsrsv1)
+    var stmttrnrs = doc.createElement('STMTTRNRS')
+    bankmsgsrsv1.appendChild(stmttrnrs)
+    var stmtrs = doc.createElement('STMTRS')
+    stmttrnrs.appendChild(stmtrs)
+    var banktranlist = doc.createElement('BANKTRANLIST')
+    stmtrs.appendChild(banktranlist)
+    var i = 0
+    entries.forEach(function (entry) {
+        var stmttrn = doc.createElement('STMTTRN')
+        stmttrn.appendChild(elem('FITID', i))
+        stmttrn.appendChild(elem('TRNTYPE', 'CHECK'))
+        stmttrn.appendChild(elem('DTPOSTED', entry.date.replace(/-/g, '')))
+        stmttrn.appendChild(elem('TRNAMT', entry.cents)) // -200.00
+        stmttrn.appendChild(elem('MEMO', entry.message))
+        banktranlist.appendChild(stmttrn)
+        i++
+    })
+    return (new XMLSerializer()).serializeToString(doc)
+}
