@@ -1,2 +1,4 @@
 html { font-family: sans-serif; }
 button { font-size: large; }
+table, th, td { border: 1px solid black; }
+.right { text-align: right; }

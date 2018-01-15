@@ -72,28 +72,26 @@ Pankkiparseri.parseSPankkiTilioteCSV = function (contents) {
     return entries
 }
 
-Pankkiparseri.handleFiles = function (files, parse, postprocess) {
+Pankkiparseri.handleFiles = function (files, callback, parse) {
     for (var i = 0; i < files.length; i++) {
         var file = files[i]
         if (!/^text\//.test(file.type)) { continue }
         var reader = new FileReader()
         reader.onload = function (e) {
-            postprocess(parse(e.target.result))
+            callback(parse(e.target.result))
         }
         reader.readAsText(file)
     }
 }
 
-Pankkiparseri.addBankToForm = function (form, bankTitle, parse) {
+Pankkiparseri.addBankToForm = function (form, callback, bankTitle, parse) {
     var hiddenInput = document.createElement('input')
     hiddenInput.style.display = 'none'
     hiddenInput.type = 'file'
     hiddenInput.accept = '.csv,text/csv'
     hiddenInput.multiple = true
     hiddenInput.addEventListener('change', function (e) {
-        Pankkiparseri.handleFiles(this.files,
-                                  parse,
-                                  console.log)
+        Pankkiparseri.handleFiles(this.files, callback, parse)
     })
     form.appendChild(hiddenInput)
     var button = document.createElement('button')
@@ -105,12 +103,14 @@ Pankkiparseri.addBankToForm = function (form, bankTitle, parse) {
     form.appendChild(button)
 }
 
-Pankkiparseri.addToForm = function (formId) {
+Pankkiparseri.addToForm = function (formId, callback) {
     var form = document.getElementById(formId)
     Pankkiparseri.addBankToForm(
-        form, 'S-Pankki (tiliote Tabula CSV)',
+        form, callback,
+        'S-Pankki (tiliote Tabula CSV)',
         Pankkiparseri.parseSPankkiTilioteCSV)
     Pankkiparseri.addBankToForm(
-        form, 'Oma Säästöpankki (tilitapahtumat CSV)',
+        form, callback,
+        'Oma Säästöpankki (tilitapahtumat CSV)',
         Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV)
 }
