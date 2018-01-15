@@ -1,6 +1,9 @@
 $(function () {
-    function entriesCallback (entries) {
-        entries.forEach(function (entry) {
+    var allEntries = []
+
+    function updateEntriesTable () {
+        $('#entries').empty()
+        allEntries.forEach(function (entry) {
             $('#entries').append(
                 $('<tr/>')
                     .append($('<td/>').text(entry.date))
@@ -9,5 +12,12 @@ $(function () {
                     .append($('<td/>').text(entry.message)))
         })
     }
-    Pankkiparseri.addToForm('pankki', entriesCallback)
+
+    function addEntries (newEntries) {
+        newEntries.forEach(function (entry) { allEntries.push(entry) })
+        allEntries.sort(function (a, b) { return a.date.localeCompare(b.date) })
+        updateEntriesTable()
+    }
+
+    Pankkiparseri.addToForm('pankki', addEntries)
 })
