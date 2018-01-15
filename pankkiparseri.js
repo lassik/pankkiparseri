@@ -18,12 +18,37 @@ Pankkiparseri.centsFromAmountParsed = function (eurosStr, centsStr, signStr) {
     return sign * ((100 * euros) + cents)
 }
 
+Pankkiparseri.centsFromAmountSignFirst = function (formattedAmount) {
+    var g = formattedAmount.match(/^([+-])(\d{1,5}),(\d{2})$/)
+    if (!g) {
+        return null
+    }
+    return Pankkiparseri.centsFromAmountParsed(g[2], g[3], g[1])
+}
+
 Pankkiparseri.centsFromAmountSignLast = function (formattedAmount) {
     var g = formattedAmount.match(/^(\d{1,5}),(\d{2})([+-])$/)
     if (!g) {
         return null
     }
     return Pankkiparseri.centsFromAmountParsed(g[1], g[2], g[3])
+}
+
+Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV = function (contents) {
+    // Official CSV download from online banking "tilitapahtumat" section.
+    var rows = $.csv.toArrays(contents, {separator: ';'})
+    var entries = []
+    var m
+    for (var lineNum = 2; lineNum <= rows.length; lineNum++) {
+        var row = rows[lineNum - 1]
+        var entry = {}
+        entry.date = row[0]
+        entry.otherParty = row[1]
+        entry.message = row[3]
+        entry.cents = Pankkiparseri.centsFromAmountSignFirst(row[4])
+        entries.push(entry)
+    }
+    return entries
 }
 
 Pankkiparseri.parseSPankkiTilioteCSV = function (contents) {
