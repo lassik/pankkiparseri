@@ -42,7 +42,7 @@ Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV = function (contents) {
     for (var lineNum = 2; lineNum <= rows.length; lineNum++) {
         var row = rows[lineNum - 1]
         var entry = {}
-        entry.date = row[0]
+        entry.date = Pankkiparseri.isoDateFromFinnishDate(row[0])
         entry.otherParty = row[1]
         entry.message = row[3]
         entry.cents = Pankkiparseri.centsFromAmountSignFirst(row[4])
