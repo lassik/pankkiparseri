@@ -11,10 +11,10 @@ Pankkiparseri.isoDateFromFinnishDate = function (finnishDate) {
     return year + '-' + month + '-' + day
 }
 
-Pankkiparseri.centsFromAmountParsed = function (eurosStr, centsStr, signStr) {
-    var euros = parseInt(eurosStr)
-    var cents = !centsStr ? 0 : parseInt(centsStr.slice(1).padStart(2, '0'))
-    var sign = (signStr === '-') ? -1 : 1
+Pankkiparseri.centsFromAmountParsed = function (euros, commaCents, sign) {
+    var euros = parseInt(euros)
+    var cents = !commaCents ? 0 : parseInt(commaCents.slice(1).padStart(2, '0'))
+    var sign = (sign === '-') ? -1 : 1
     return sign * ((100 * euros) + cents)
 }
 
