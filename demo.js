@@ -8,7 +8,7 @@ $(function () {
 	    if (!/^text\//.test(file.type)) { continue }
 	    var reader = new FileReader()
 	    var parse
-	    parse = Pankkiparseri.parseSPankkiCSV
+	    parse = Pankkiparseri.parseSPankkiTilioteCSV
 	    reader.onload = function (e) {
 		console.log(parse(e.target.result))
 	    }

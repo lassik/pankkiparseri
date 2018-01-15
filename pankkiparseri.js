@@ -1,6 +1,6 @@
 Pankkiparseri = {}
 
-Pankkiparseri.parseSPankkiCSV = function (contents) {
+Pankkiparseri.parseSPankkiTilioteCSV = function (contents) {
     // CSV ripped from S-Pankki bank statement PDF by Tabula.
     var rows = $.csv.toArrays(contents)
     var entries = []
