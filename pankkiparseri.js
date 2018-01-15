@@ -34,12 +34,12 @@ Pankkiparseri.parseAmountPreparsed = function (eurosStr, commaCents, signStr) {
 }
 
 Pankkiparseri.parseAmountSignFirst = function (formattedAmount) {
-    var g = formattedAmount.match(/^([+-]?)(\d{1,5})(,\d{1,2})?$/)
+    var g = formattedAmount.match(/^([+-]?)([\d.]{1,5})(,\d{1,2})?$/)
     return g ? Pankkiparseri.parseAmountPreparsed(g[2], g[3], g[1]) : null
 }
 
 Pankkiparseri.parseAmountSignLast = function (formattedAmount) {
-    var g = formattedAmount.match(/^(\d{1,5})(,\d{1,2})?([+-?])$/)
+    var g = formattedAmount.match(/^([\d.]{1,5})(,\d{1,2})?([+-?])$/)
     return g ? Pankkiparseri.parseAmountPreparsed(g[1], g[2], g[3]) : null
 }
 
