@@ -1,5 +1,10 @@
 Pankkiparseri = {}
 
+Pankkiparseri.withoutLeadingDayAndMonth = function (s) {
+    var g = s.match(/^[0-3]\d[0-1]\d (.*)$/)
+    return g ? g[1] : s
+}
+
 Pankkiparseri.isoDateFromFinnishDate = function (finnishDate) {
     var g = finnishDate.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/)
     if (!g) {
@@ -64,7 +69,7 @@ Pankkiparseri.parseSPankkiTilioteCSV = function (contents) {
             var entry = {}
             entry.date = date
             entry.archivalId = row[0]
-            entry.otherParty = row[1]
+            entry.otherParty = Pankkiparseri.withoutLeadingDayAndMonth(row[1])
             entry.cents = Pankkiparseri.centsFromAmountSignLast(row[row.length - 1])
             entries.push(entry)
         }
