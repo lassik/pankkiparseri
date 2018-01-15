@@ -38,7 +38,6 @@ Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV = function (contents) {
     // Official CSV download from online banking "tilitapahtumat" section.
     var rows = $.csv.toArrays(contents, {separator: ';'})
     var entries = []
-    var m
     for (var lineNum = 2; lineNum <= rows.length; lineNum++) {
         var row = rows[lineNum - 1]
         var entry = {}
