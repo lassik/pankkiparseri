@@ -17,6 +17,12 @@ $(function () {
 
     function updateEntriesTable () {
         $('#entries').empty()
+        $('#entries').append(
+            $('<tr/>')
+                .append($('<th/>').text('Pvm'))
+                .append($('<th/>').text('Määrä'))
+                .append($('<th/>').text('Kuka'))
+                .append($('<th/>').text('Viesti')))
         allEntries.forEach(function (entry) {
             $('#entries').append(
                 $('<tr/>')
