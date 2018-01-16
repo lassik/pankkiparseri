@@ -157,7 +157,6 @@ Pankkiparseri.ofxStringFromEntries = function (entries) {
     bankacctfrom.appendChild(elem('ACCTTYPE', 'CHECKING'))
     stmtrs.appendChild(bankacctfrom)
     var banktranlist = doc.createElement('BANKTRANLIST')
-    stmtrs.appendChild(banktranlist)
     var i = 0
     entries.forEach(function (entry) {
         var stmttrn = doc.createElement('STMTTRN')
@@ -169,5 +168,6 @@ Pankkiparseri.ofxStringFromEntries = function (entries) {
         banktranlist.appendChild(stmttrn)
         i++
     })
+    stmtrs.appendChild(banktranlist)
     return (new XMLSerializer()).serializeToString(doc)
 }
