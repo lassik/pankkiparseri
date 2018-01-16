@@ -27,7 +27,7 @@ $(function () {
             $('#entries').append(
                 $('<tr/>')
                     .append($('<td/>').text(entry.date.iso))
-                    .append($('<td/>').text(entry.amount ? entry.amount.eurosCommaCents : 'x').addClass('right'))
+                    .append($('<td/>').text(entry.amount ? entry.amount.eurosCommaCents+' €' : '').addClass('right'))
                     .append($('<td/>').text(entry.otherParty))
                     .append($('<td/>').text(entry.message)))
         })
