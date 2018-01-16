@@ -151,6 +151,11 @@ Pankkiparseri.ofxStringFromEntries = function (entries) {
     bankmsgsrsv1.appendChild(stmttrnrs)
     var stmtrs = doc.createElement('STMTRS')
     stmttrnrs.appendChild(stmtrs)
+    var bankacctfrom = doc.createElement('BANKACCTFROM')
+    bankacctfrom.appendChild(elem('BANKID', '000000000'))
+    bankacctfrom.appendChild(elem('ACCTID', '0000000'))
+    bankacctfrom.appendChild(elem('ACCTTYPE', 'CHECKING'))
+    stmtrs.appendChild(bankacctfrom)
     var banktranlist = doc.createElement('BANKTRANLIST')
     stmtrs.appendChild(banktranlist)
     var i = 0
