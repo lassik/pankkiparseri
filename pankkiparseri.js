@@ -72,7 +72,7 @@ Pankkiparseri.parseSPankkiTilioteTabulaCSV = function (contents) {
         if ((g = row[0].match(/^KIRJAUSPÄIVÄ (\d{2}\.\d{2}\.\d{2})/))) {
             date = Pankkiparseri.parseFinnishDate(g[1])
             entry = sinceEntry = null
-        } else if (row[0].match(/^\d{18} [A-Z]/)) {
+        } else if (row[0].match(/^\d{18}( [A-Z])?/)) {
             sinceEntry = 0
             entry = {}
             entry.date = date
