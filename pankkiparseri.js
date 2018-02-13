@@ -60,7 +60,7 @@ Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV = function (contents) {
 }
 
 Pankkiparseri.parseSPankkiTilioteTabulaCSV = function (contents) {
-    // CSV ripped from S-Pankki bank statement PDF by Tabula.
+    // CSV ripped from S-Pankki bank statement PDF by Tabula with autodetect.
     var rows = $.csv.toArrays(contents)
     var entries = []
     var entry = null
