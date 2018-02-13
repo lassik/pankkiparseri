@@ -2,9 +2,10 @@ $(function () {
     var allEntries = []
 
     function downloadXmlFile (filename, xmlString) {
+        var base64 = btoa(unescape(encodeURIComponent(xmlString)))
         var hiddenLink = document.createElement('a')
         hiddenLink.download = filename
-        hiddenLink.href = 'data:text/xml;charset=utf-8;base64,' + btoa(xmlString)
+        hiddenLink.href = 'data:text/xml;charset=utf-8;base64,' + base64
         document.body.appendChild(hiddenLink)
         hiddenLink.click()
         document.body.removeChild(hiddenLink)
