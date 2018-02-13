@@ -11,7 +11,7 @@ $(function () {
         document.body.removeChild(hiddenLink)
     }
 
-    function downloadOFX () {
+    function downloadOfxFile () {
         downloadXmlFile('pankkiparseri.ofx',
                         Pankkiparseri.ofxStringFromEntries(allEntries))
     }
@@ -41,5 +41,5 @@ $(function () {
     }
 
     Pankkiparseri.addToForm('pankki', addEntries)
-    $('#downloadButton').click(downloadOFX)
+    $('#downloadButton').click(downloadOfxFile)
 })
