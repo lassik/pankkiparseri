@@ -94,7 +94,7 @@ Pankkiparseri.parseSPankkiTilioteTabulaCSV = function (contents) {
     return entries
 }
 
-Pankkiparseri.handleFiles = function (files, entriesCallback, parse) {
+Pankkiparseri.handleFiles = function (files, entriesCallback, parse, encoding) {
     for (var i = 0; i < files.length; i++) {
         var file = files[i]
         if (!/^text\//.test(file.type)) { continue }
@@ -102,18 +102,18 @@ Pankkiparseri.handleFiles = function (files, entriesCallback, parse) {
         reader.onload = function (e) {
             entriesCallback(parse(e.target.result))
         }
-        reader.readAsText(file)
+        reader.readAsText(file, encoding)
     }
 }
 
-Pankkiparseri.addBankToForm = function (form, entriesCallback, bankTitle, parse) {
+Pankkiparseri.addBankToForm = function (form, entriesCallback, bankTitle, parse, encoding) {
     var hiddenInput = document.createElement('input')
     hiddenInput.style.display = 'none'
     hiddenInput.type = 'file'
     hiddenInput.accept = '.csv,text/csv'
     hiddenInput.multiple = true
     hiddenInput.addEventListener('change', function (e) {
-        Pankkiparseri.handleFiles(this.files, entriesCallback, parse)
+        Pankkiparseri.handleFiles(this.files, entriesCallback, parse, encoding)
     })
     form.appendChild(hiddenInput)
     var button = document.createElement('button')
@@ -130,11 +130,11 @@ Pankkiparseri.addToForm = function (formId, entriesCallback) {
     Pankkiparseri.addBankToForm(
         form, entriesCallback,
         'S-Pankki (tiliote Tabula CSV)',
-        Pankkiparseri.parseSPankkiTilioteTabulaCSV)
+        Pankkiparseri.parseSPankkiTilioteTabulaCSV, 'UTF-8')
     Pankkiparseri.addBankToForm(
         form, entriesCallback,
         'Oma Säästöpankki (tilitapahtumat CSV)',
-        Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV)
+        Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV, 'ISO-8859-15')
 }
 
 Pankkiparseri.ofxStringFromEntries = function (entries) {
