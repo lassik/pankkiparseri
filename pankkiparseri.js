@@ -59,6 +59,30 @@ Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV = function(contents) {
   return entries;
 };
 
+Pankkiparseri.parseOsuuspankkiTilitapahtumatCSV = function(contents) {
+  // Official CSV download from online banking "tilitapahtumat" section.
+  [
+    "Tilitapahtumat",
+    "Siirry tiliotteeseen",
+    "Hae tapahtumat",
+    "Lataa pelkät tilitapahtumat tiedostona (csv)"
+  ];
+  var rows = $.csv.toArrays(contents, { separator: ";" });
+  var entries = [];
+  for (var lineNum = 2; lineNum <= rows.length; lineNum++) {
+    var row = rows[lineNum - 1];
+    var entry = {};
+    entry.date = Pankkiparseri.parseFinnishDate(row[1]);
+    entry.otherParty = row[5];
+    entry.message = row[4] + " " + row[8];
+    entry.amount = Pankkiparseri.parseAmountSignFirst(row[2]);
+    entry.referenceNumber = row[7];
+    entry.archivalId = row[9];
+    entries.push(entry);
+  }
+  return entries;
+};
+
 Pankkiparseri.parseSPankkiTilioteTabulaCSV = function(contents) {
   // CSV ripped from S-Pankki bank statement PDF by Tabula with autodetect.
   var rows = $.csv.toArrays(contents);
@@ -151,6 +175,13 @@ Pankkiparseri.addToForm = function(formId, entriesCallback) {
     entriesCallback,
     "Oma Säästöpankki (tilitapahtumat CSV)",
     Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV,
+    "ISO-8859-15"
+  );
+  Pankkiparseri.addBankToForm(
+    form,
+    entriesCallback,
+    "Osuuspankki (tilitapahtumat CSV)",
+    Pankkiparseri.parseOsuuspankkiTilitapahtumatCSV,
     "ISO-8859-15"
   );
 };
