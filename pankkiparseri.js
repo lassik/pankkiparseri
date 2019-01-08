@@ -168,29 +168,39 @@ Pankkiparseri.addBankButtonToForm = function(
   form.appendChild(button);
 };
 
+Pankkiparseri.formatsList = [
+  {
+    bankTitle: "S-Pankki",
+    subtitle: "tiliote Tabula CSV",
+    parse: Pankkiparseri.parseSPankkiTilioteTabulaCSV,
+    encoding: "UTF-8"
+  },
+  {
+    bankTitle: "Oma Säästöpankki",
+    subtitle: "tilitapahtumat CSV",
+    parse: Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV,
+    encoding: "ISO-8859-15"
+  },
+  {
+    bankTitle: "Osuuspankki",
+    subtitle: "tilitapahtumat CSV",
+    parse: Pankkiparseri.parseOsuuspankkiTilitapahtumatCSV,
+    encoding: "ISO-8859-15"
+  }
+];
+
 Pankkiparseri.addToForm = function(formId, entriesCallback) {
   var form = document.getElementById(formId);
-  Pankkiparseri.addBankToForm(
-    form,
-    entriesCallback,
-    "S-Pankki (tiliote Tabula CSV)",
-    Pankkiparseri.parseSPankkiTilioteTabulaCSV,
-    "UTF-8"
-  );
-  Pankkiparseri.addBankToForm(
-    form,
-    entriesCallback,
-    "Oma Säästöpankki (tilitapahtumat CSV)",
-    Pankkiparseri.parseOmaSaastopankkiTilitapahtumatCSV,
-    "ISO-8859-15"
-  );
-  Pankkiparseri.addBankToForm(
-    form,
-    entriesCallback,
-    "Osuuspankki (tilitapahtumat CSV)",
-    Pankkiparseri.parseOsuuspankkiTilitapahtumatCSV,
-    "ISO-8859-15"
-  );
+  for (var i = 0; i < Pankkiparseri.formatsList.length; i++) {
+    var format = Pankkiparseri.formatsList[i];
+    Pankkiparseri.addBankButtonToForm(
+      form,
+      entriesCallback,
+      format.bankTitle,
+      format.parse,
+      format.encoding
+    );
+  }
 };
 
 Pankkiparseri.ofxStringFromEntries = function(entries) {
