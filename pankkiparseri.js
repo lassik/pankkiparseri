@@ -1,4 +1,4 @@
-Pankkiparseri = {};
+var Pankkiparseri = {};
 
 Pankkiparseri.withoutLeadingDayAndMonth = function(s) {
   var g = s.match(/^[0-3]\d[0-1]\d (.*)$/);
@@ -20,10 +20,10 @@ Pankkiparseri.parseFinnishDate = function(finnishDate) {
 };
 
 Pankkiparseri.parseAmountPreparsed = function(eurosStr, commaCents, signStr) {
-  var euros = parseInt(eurosStr.replace(/\./g, ""));
+  var euros = parseInt(eurosStr.replace(/\./g, ""), 10);
   eurosStr = String(euros);
   var centsStr = (commaCents ? commaCents.slice(1) : "0").padEnd(2, "0");
-  var cents = parseInt(centsStr);
+  var cents = parseInt(centsStr, 10);
   var sign = signStr === "-" ? -1 : 1;
   signStr = sign < 0 ? "-" : "+";
   return {
@@ -193,7 +193,7 @@ Pankkiparseri.ofxStringFromEntries = function(entries) {
     e.append(String(bodyText));
     return e;
   }
-  doc = document.implementation.createDocument(null, "OFX");
+  doc = document.implementation.createDocument(null, "OFX", null);
   var bankmsgsrsv1 = doc.createElement("BANKMSGSRSV1");
   doc.documentElement.appendChild(bankmsgsrsv1);
   var stmttrnrs = doc.createElement("STMTTRNRS");
