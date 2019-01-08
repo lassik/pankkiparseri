@@ -14,6 +14,7 @@ Pankkiparseri.parseFinnishDate = function(finnishDate) {
   var month = g[2].padStart(2, "0");
   var day = g[1].padStart(2, "0");
   return {
+    finnish: finnishDate,
     iso: year + "-" + month + "-" + day,
     isoNoDashes: year + month + day
   };
