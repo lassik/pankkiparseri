@@ -133,13 +133,7 @@ Pankkiparseri.handleFiles = function(files, entriesCallback, parse, encoding) {
   }
 };
 
-Pankkiparseri.addBankToForm = function(
-  form,
-  entriesCallback,
-  bankTitle,
-  parse,
-  encoding
-) {
+Pankkiparseri.addBankToForm = function(form, entriesCallback, parse, encoding) {
   var hiddenInput = document.createElement("input");
   hiddenInput.style.display = "none";
   hiddenInput.type = "file";
@@ -149,16 +143,28 @@ Pankkiparseri.addBankToForm = function(
     Pankkiparseri.handleFiles(this.files, entriesCallback, parse, encoding);
   });
   form.appendChild(hiddenInput);
+  return function(e) {
+    e.preventDefault();
+    hiddenInput.click();
+  };
+};
+
+Pankkiparseri.addBankButtonToForm = function(
+  form,
+  entriesCallback,
+  bankTitle,
+  parse,
+  encoding
+) {
+  var onClick = Pankkiparseri.addBankToForm(
+    form,
+    entriesCallback,
+    parse,
+    encoding
+  );
   var button = document.createElement("button");
   button.appendChild(document.createTextNode(bankTitle));
-  button.addEventListener(
-    "click",
-    function(e) {
-      hiddenInput.click();
-      e.preventDefault(); // prevent navigation to "#"
-    },
-    false
-  );
+  button.addEventListener("click", onClick, false);
   form.appendChild(button);
 };
 
