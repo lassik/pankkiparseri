@@ -5,19 +5,41 @@ Pankkiparseri.withoutLeadingDayAndMonth = function(s) {
   return g ? g[1] : s;
 };
 
-Pankkiparseri.parseFinnishDate = function(finnishDate) {
-  var g = finnishDate.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
-  if (!g) {
-    return null;
+Pankkiparseri.ensureFourDigitYear = function(year) {
+  if (year < 0) {
+    throw "Vuosiluku";
+  } else if (year < 50) {
+    return year + 2000;
+  } else if (year < 100) {
+    return year + 1900;
+  } else if (year < 1900) {
+    throw "Vuosiluku";
+  } else {
+    return year;
   }
-  var year = g[3].length === 2 ? "20" + g[3] : g[3];
-  var month = g[2].padStart(2, "0");
-  var day = g[1].padStart(2, "0");
+};
+
+Pankkiparseri.generateDate = function(year, month, day) {
+  year = "" + Pankkiparseri.ensureFourDigitYear(year);
+  month = ("" + month).padStart(2, "0");
+  day = ("" + day).padStart(2, "0");
   return {
-    finnish: finnishDate,
+    finnish: day + "." + month + "." + year,
     iso: year + "-" + month + "-" + day,
     isoNoDashes: year + month + day
   };
+};
+
+Pankkiparseri.parseFinnishDate = function(finnishDate) {
+  var g = finnishDate.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2}|\d{4})$/);
+  if (!g) {
+    return null;
+  }
+  return Pankkiparseri.generateDate(
+    parseInt(g[3]),
+    parseInt(g[2]),
+    parseInt(g[1])
+  );
 };
 
 Pankkiparseri.parseAmountPreparsed = function(eurosStr, commaCents, signStr) {
